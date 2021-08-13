@@ -8,13 +8,17 @@ import { Observable } from 'ubimo-ad-dispatcher/node_modules/rxjs';
 
 export class AddsService {
 
+
   public adDispatcher$:Observable<IAdEvent>= adDispatcher.adEvents$;
   constructor(){}
 
     startListeningToEvents(){
-      this.adDispatcher$.subscribe(ad => {
-        console.log(ad)
+      adDispatcher.adEvents$.subscribe(ad => {
+        console.log(ad);
       })
 }
 
+getFilterdList():Observable<IAdEvent> {
+  return this.adDispatcher$;
+}
 }
