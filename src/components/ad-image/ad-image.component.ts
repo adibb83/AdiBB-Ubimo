@@ -1,49 +1,60 @@
 import {
   Component,
   OnInit,
-  ChangeDetectionStrategy,
   Input,
-  AfterViewInit,  } from '@angular/core';
-import { HomeComponent} from '@pages/home/home.component';
-import { interval, timer } from 'rxjs';
-import {ICreative,IAdEvent} from 'ubimo-ad-dispatcher'
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { HomeComponent } from '@pages/home/home.component';
+import { interval, Subscription } from 'rxjs';
+import { IAdEvent } from 'ubimo-ad-dispatcher';
+import { AddsService } from '@services/adds.service';
 
 @Component({
   selector: 'app-ad-image',
   templateUrl: './ad-image.component.html',
-  styleUrls: ['./ad-image.component.scss']
+  styleUrls: ['./ad-image.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdImageComponent implements OnInit {
-
-  @Input('ad-object') adObject!:IAdEvent
+  @Input('ad-object') adObject!: IAdEvent;
   public unique_key!: number;
   public parentRef!: HomeComponent;
-  progress:number = 20;
+  progress: number = 20;
   positionX = 0;
   positionY = 0;
-  counter:any;
-  constructor() { }
+  sub!: Subscription;
+
+  constructor(public addsService: AddsService) {}
 
   ngOnInit(): void {
-    this.positionX = 100*this.adObject.coordinates.x/this.parentRef.offSetWidth
-    this.positionY = 100*this.adObject.coordinates.y/this.parentRef.offSetHight
+    this.positionX = this.addsService.calcAddPosition(
+      this.parentRef.offSetWidth,
+      this.adObject.coordinates.x
+    );
+    this.positionY = this.addsService.calcAddPosition(
+      this.parentRef.offSetHight,
+      this.adObject.coordinates.y
+    );
     this.startTimer();
   }
 
-
   removeComponent() {
-    this.parentRef.remove(this.unique_key)
+    this.parentRef.remove(this.unique_key);
   }
 
   startTimer() {
     const source = interval(1000);
-    source.subscribe(val=> {
-      console.log(val)
-      this.progress= this.progress + 20;
-      if(val > 5){
-        this.removeComponent()
+    this.sub = source.subscribe((val) => {
+      console.log(val);
+      this.progress = this.progress + 20;
+      this.parentRef.cdr.detectChanges();
+      if (val > 5) {
+        this.removeComponent();
       }
-    })
+    });
   }
 
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
 }

@@ -13,8 +13,10 @@ import {
 import { AddsService } from '@services/adds.service';
 import { Observable } from 'ubimo-ad-dispatcher/node_modules/rxjs';
 import { IAdEvent, adDispatcher } from 'ubimo-ad-dispatcher';
+import { ExtendIAdEvent } from '@models/adds.models';
 import { AdImageComponent } from '@components/ad-image/ad-image.component';
 import { AdVideoComponent } from '@components/ad-video/ad-video.component';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -22,8 +24,8 @@ import { AdVideoComponent } from '@components/ad-video/ad-video.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit, AfterViewInit {
-  public addList: IAdEvent[] = [];
-  public filterdAdList$: Observable<IAdEvent> = adDispatcher.adEvents$;
+  public adList: ExtendIAdEvent[] = [];
+  filterdadList: ExtendIAdEvent[] = [];
   startTime!: string;
   endTime!: string;
   offSetWidth: number = 0;
@@ -38,13 +40,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(
     public addService: AddsService,
-    private cdr: ChangeDetectorRef,
+    public cdr: ChangeDetectorRef,
     private CFR: ComponentFactoryResolver
   ) {
     adDispatcher.adEvents$.subscribe((ad) => {
       console.log(ad);
       this.createComponent(ad);
-      this.addList.unshift(ad);
+      let extende: ExtendIAdEvent = ad;
+      extende.time = this.addService.convertDateToTimestamp(new Date());
+      this.adList.unshift(extende);
       this.cdr.detectChanges();
     });
   }
@@ -80,7 +84,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     );
 
     console.log('ref', componentRef);
-
     // let vcrIndex: number = this.VCR.indexOf(componentRef as any);
 
     // removing component from container
@@ -90,5 +93,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.componentsReferences = this.componentsReferences.filter(
       (x) => x.instance.unique_key !== key
     );
+  }
+
+  filterLog() {
+    this.filterdadList = this.adList.filter((ad) => {
+      ad.time != null &&
+        ad.time >= Number.parseInt(this.startTime) &&
+        ad.time >= Number.parseInt(this.endTime);
+    });
   }
 }
