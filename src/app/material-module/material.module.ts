@@ -8,6 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const MATERIAL_IMPORTS = [
   CommonModule,
@@ -18,12 +19,13 @@ const MATERIAL_IMPORTS = [
   MatListModule,
   MatProgressBarModule,
   MatSnackBarModule,
-  MatAutocompleteModule
-]
+  MatAutocompleteModule,
+  MatTooltipModule,
+];
 
 @NgModule({
   declarations: [],
   imports: MATERIAL_IMPORTS,
-  exports:MATERIAL_IMPORTS
+  exports: MATERIAL_IMPORTS,
 })
-export class MaterialModule { }
+export class MaterialModule {}

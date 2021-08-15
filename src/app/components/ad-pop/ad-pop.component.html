@@ -1,0 +1,12 @@
+  <div class="ads-container" [ngSwitch]="adObject.type" [ngStyle]="{'top.%': positionY , 'left.%': positionX}">
+    <div class="img-container" *ngSwitchCase="'IMAGE'" >
+      <img src={{adObject.creative.url}} alt="image">
+      </div>
+    <div class="video-container" *ngSwitchCase="'VIDEO'">
+      <video preload="true" autoplay [volume]="0">
+        <source src={{adObject.creative.url}} type="video/mp4">
+      </video>
+    </div>
+    <mat-progress-bar mode="determinate" [value]= "progress"></mat-progress-bar>
+  </div>
+

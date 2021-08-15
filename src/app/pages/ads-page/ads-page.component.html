@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="left-side-bar">
+    <h2 class="title">ADS LOG</h2>
+    <div class="list-filters">
+      <mat-form-field class="example-form-field" appearance="fill">
+        <mat-label>Start Time</mat-label>
+        <input matInput type="number" [(ngModel)]="startTime">
+        <button *ngIf="startTime" matSuffix mat-icon-button aria-label="Clear">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <mat-form-field class="example-form-field" appearance="fill">
+        <mat-label>End Time</mat-label>
+        <input matInput type="number" [(ngModel)]="endTime">
+        <button *ngIf="endTime" matSuffix mat-icon-button aria-label="Clear">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="filter-button">
+      <button color="accent" [disabled]="!endTime || !startTime"  mat-raised-button aria-label="Filter" (click)="filterLog()">
+        Filter
+      </button>
+      <button color="accent" *ngIf="isFilterd"  mat-raised-button aria-label="Filter" (click)="resetLog()">
+        Reset
+      </button>
+    </div>
+    <div class="log-list">
+    <mat-list>
+      <mat-list-item *ngFor="let add of logAdsList">
+        <mat-icon class="cursor-pointer" matListIcon  [matTooltip]="add.creative.url">{{add.type == "IMAGE" ? "image": "smart_display"}}</mat-icon>
+        <h3 matLine>{{add.creative.name}} </h3>
+        <p matLine class="list-info">
+          <span> X: {{add.coordinates.x}}</span>
+          <span> Y: {{add.coordinates.y}}</span>
+          <span *ngIf="add.time"> Time: {{add?.time|date:'HH:mm:ss'}}</span>
+        </p>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  </div>
+  <div #main class="main">
+    <div class="map-container">
+      <div class="list-container" >
+        <div class="list-item" *ngFor="let add of adList">
+          <app-ad-pop *ngIf="add.isActive" (close)="add.isActive = false" [ad-object]="add"></app-ad-pop>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
